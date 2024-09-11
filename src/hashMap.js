@@ -57,16 +57,13 @@ class HashMap {
   }
 
   set(key, value) {
-    if (this.size / this.buckets > this.loadFactor) {
-      this.resize();
-    }
-
     let index = this.hash(key);
 
     if (this.map[index] == null) {
       const myList = new LinkedList();
       myList.append({ key, value });
       this.map[index] = myList;
+      this.size++;
     } else {
       let current = this.map[index].head;
       while (current) {
@@ -77,8 +74,12 @@ class HashMap {
         current = current.nextNode;
       }
       this.map[index].append({ key, value }); // Add new key-value pair
+      this.size++;
     }
-    this.size++;
+
+    if (this.size / this.buckets > this.loadFactor) {
+      this.resize();
+    }
   }
 
   get(key) {
@@ -147,8 +148,8 @@ class HashMap {
         let current = this.map[i].head;
 
         while (current) {
-          length++;
           current = current.nextNode;
+          length++;
         }
       }
     }
@@ -165,12 +166,14 @@ class HashMap {
   }
 
   keys() {
+    console.log(this.buckets);
     const arrayOfKeys = [];
     for (let i = 0; i < this.buckets; i++) {
       if (this.map[i] != null) {
         let current = this.map[i].head;
 
         while (current) {
+          console.log(`Bucket index: ${[i]} and key: ${current.value.key}`);
           arrayOfKeys.push(current.value.key);
           current = current.nextNode;
         }
